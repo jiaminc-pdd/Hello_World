@@ -1,0 +1,260 @@
+[
+  {
+    "reason": "Task data model provides the core data structure for all todo operations",
+    "description": "Python dataclass defining the Task entity with fields: id (UUID), description (str), completed (bool), created_at (datetime), and completed_at (optional datetime). Includes validation and serialization methods for JSON storage. No external dependencies, uses only Python stdlib (dataclasses, datetime, uuid).",
+    "dependencies": [],
+    "priority": 1,
+    "filename": "task_model_Python.prompt",
+    "filepath": "todo/task_model.py",
+    "tags": [
+      "model",
+      "data"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.python.org/3/library/dataclasses.html",
+        "purpose": "Official Python dataclasses documentation for defining the Task data structure"
+      },
+      {
+        "url": "https://docs.python.org/3/library/datetime.html",
+        "purpose": "Datetime module for task timestamps (created_at, completed_at)"
+      },
+      {
+        "url": "https://docs.python.org/3/library/uuid.html",
+        "purpose": "UUID module for generating unique task identifiers"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "Task",
+            "signature": "@dataclass class Task",
+            "returns": "Task instance with id, description, completed, created_at, completed_at fields"
+          },
+          {
+            "name": "to_dict",
+            "signature": "def to_dict(self) -> dict",
+            "returns": "Dictionary representation of task for JSON serialization"
+          },
+          {
+            "name": "from_dict",
+            "signature": "@classmethod def from_dict(cls, data: dict) -> Task",
+            "returns": "Task instance created from dictionary"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Storage layer manages JSON file persistence for all task data",
+    "description": "Module handling todos.json file operations with atomic writes, error handling for missing/corrupted files, and safe JSON encoding/decoding. Provides load_tasks() and save_tasks() functions. Uses pathlib for file operations and contextlib for safe file handling. Handles FileNotFoundError and JSONDecodeError gracefully, initializing empty task list when file doesn't exist.",
+    "dependencies": [
+      "task_model_Python.prompt"
+    ],
+    "priority": 2,
+    "filename": "storage_Python.prompt",
+    "filepath": "todo/storage.py",
+    "tags": [
+      "storage",
+      "persistence"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.python.org/3/library/json.html",
+        "purpose": "JSON module for reading and writing task data to todos.json file"
+      },
+      {
+        "url": "https://docs.python.org/3/library/pathlib.html",
+        "purpose": "Pathlib for modern file path operations and file existence checks"
+      },
+      {
+        "url": "https://docs.python.org/3/library/contextlib.html",
+        "purpose": "Context managers for safe file operations (with statements)"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "get_storage_path",
+            "signature": "def get_storage_path() -> Path",
+            "returns": "Path to todos.json (from env var or default)",
+            "sideEffects": "Reads TODOS_FILE environment variable"
+          },
+          {
+            "name": "load_tasks",
+            "signature": "def load_tasks() -> list[Task]",
+            "returns": "List of Task objects loaded from JSON file",
+            "errors": [
+              "JSONDecodeError if file is corrupted"
+            ],
+            "sideEffects": "Reads from todos.json file, creates empty list if file missing"
+          },
+          {
+            "name": "save_tasks",
+            "signature": "def save_tasks(tasks: list[Task]) -> None",
+            "returns": "None",
+            "errors": [
+              "IOError if file cannot be written"
+            ],
+            "sideEffects": "Writes to todos.json file with UTF-8 encoding"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "CLI parser translates user commands into structured arguments for the application",
+    "description": "Command-line argument parser using argparse with subcommands: add (description), list, complete (task-id), delete (task-id). Returns parsed namespace with command and arguments. Provides help messages and usage examples. Independent of other modules to allow parallel development.",
+    "dependencies": [],
+    "priority": 3,
+    "filename": "cli_parser_Python.prompt",
+    "filepath": "todo/cli_parser.py",
+    "tags": [
+      "cli",
+      "parser"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.python.org/3/library/argparse.html",
+        "purpose": "Argparse API reference for building the CLI argument parser"
+      },
+      {
+        "url": "https://docs.python.org/3/howto/argparse.html",
+        "purpose": "Argparse tutorial for implementing subcommands (add, list, complete, delete)"
+      }
+    ],
+    "interface": {
+      "type": "cli",
+      "cli": {
+        "commands": [
+          {
+            "name": "add",
+            "args": [
+              {
+                "name": "description",
+                "type": "str",
+                "required": true
+              }
+            ],
+            "flags": []
+          },
+          {
+            "name": "list",
+            "args": [],
+            "flags": []
+          },
+          {
+            "name": "complete",
+            "args": [
+              {
+                "name": "task_id",
+                "type": "str",
+                "required": true
+              }
+            ],
+            "flags": []
+          },
+          {
+            "name": "delete",
+            "args": [
+              {
+                "name": "task_id",
+                "type": "str",
+                "required": true
+              }
+            ],
+            "flags": []
+          }
+        ],
+        "io": {
+          "stdout": "Human-readable output, help messages, error messages"
+        }
+      }
+    }
+  },
+  {
+    "reason": "Task manager orchestrates CRUD operations and business logic",
+    "description": "High-level API for task operations: add_task(description), list_tasks(), complete_task(task_id), delete_task(task_id). Handles task lookup by ID, validation, and state transitions. Returns user-friendly error messages (not stack traces). Coordinates between storage and task model layers.",
+    "dependencies": [
+      "task_model_Python.prompt",
+      "storage_Python.prompt"
+    ],
+    "priority": 4,
+    "filename": "task_manager_Python.prompt",
+    "filepath": "todo/task_manager.py",
+    "tags": [
+      "business-logic",
+      "orchestration"
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "add_task",
+            "signature": "def add_task(description: str) -> Task",
+            "returns": "Newly created Task object",
+            "sideEffects": "Persists new task to storage"
+          },
+          {
+            "name": "list_tasks",
+            "signature": "def list_tasks() -> list[Task]",
+            "returns": "List of all tasks"
+          },
+          {
+            "name": "complete_task",
+            "signature": "def complete_task(task_id: str) -> Task",
+            "returns": "Updated task marked as complete",
+            "errors": [
+              "ValueError if task_id not found"
+            ],
+            "sideEffects": "Updates task completion status and timestamp, persists to storage"
+          },
+          {
+            "name": "delete_task",
+            "signature": "def delete_task(task_id: str) -> None",
+            "returns": "None",
+            "errors": [
+              "ValueError if task_id not found"
+            ],
+            "sideEffects": "Removes task from storage"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Main entry point wires together CLI parser and task manager to execute user commands",
+    "description": "Application entry point (__main__.py) that parses CLI arguments and dispatches to appropriate task_manager functions. Formats output for terminal display. Catches exceptions and displays user-friendly error messages without stack traces. Exit codes: 0 for success, 1 for user errors, 2 for system errors.",
+    "dependencies": [
+      "cli_parser_Python.prompt",
+      "task_manager_Python.prompt"
+    ],
+    "priority": 5,
+    "filename": "main_Python.prompt",
+    "filepath": "todo/__main__.py",
+    "tags": [
+      "entry-point",
+      "cli"
+    ],
+    "interface": {
+      "type": "cli",
+      "cli": {
+        "commands": [
+          {
+            "name": "todo",
+            "args": [],
+            "flags": []
+          }
+        ],
+        "io": {
+          "stdout": "Task lists, confirmation messages, success/error messages"
+        }
+      }
+    }
+  }
+]

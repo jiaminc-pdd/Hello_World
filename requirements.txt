@@ -1,0 +1,16 @@
+# No external dependencies required
+# This application uses only Python 3.8+ standard library:
+# - dataclasses (task data model)
+# - datetime (timestamps)
+# - uuid (task identifiers)
+# - json (file persistence)
+# - pathlib (file operations)
+# - contextlib (safe resource management)
+# - argparse (CLI argument parsing)
+
+# Development dependencies (optional)
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0

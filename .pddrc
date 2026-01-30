@@ -1,0 +1,67 @@
+version: "1.0"
+
+contexts:
+  # ============================================================
+  # TASK MODEL
+  # ============================================================
+
+  task_model:
+    paths: ["*task_model*"]
+    defaults:
+      outputs:
+        code:
+          path: "todo/task_model.py"
+
+  # ============================================================
+  # STORAGE
+  # ============================================================
+
+  storage:
+    paths: ["*storage*"]
+    defaults:
+      outputs:
+        code:
+          path: "todo/storage.py"
+
+  # ============================================================
+  # CLI PARSER
+  # ============================================================
+
+  cli_parser:
+    paths: ["*cli_parser*"]
+    defaults:
+      outputs:
+        code:
+          path: "todo/cli_parser.py"
+
+  # ============================================================
+  # TASK MANAGER
+  # ============================================================
+
+  task_manager:
+    paths: ["*task_manager*"]
+    defaults:
+      outputs:
+        code:
+          path: "todo/task_manager.py"
+
+  # ============================================================
+  # MAIN ENTRY POINT
+  # ============================================================
+
+  main:
+    paths: ["*main*"]
+    defaults:
+      outputs:
+        code:
+          path: "todo/__main__.py"
+
+  # ============================================================
+  # DEFAULT FALLBACK
+  # ============================================================
+  # CRITICAL: prompts_dir goes ONLY here, not in other contexts!
+
+  default:
+    defaults:
+      prompts_dir: "prompts/"
+      generate_output_path: "todo/"
