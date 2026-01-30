@@ -1,0 +1,57 @@
+version: "1.0"
+
+contexts:
+  # ============================================================
+  # MODELS
+  # ============================================================
+
+  models:
+    paths: ["*models*"]
+    defaults:
+      outputs:
+        code:
+          path: "src/models.py"
+
+  # ============================================================
+  # STORAGE
+  # ============================================================
+
+  storage:
+    paths: ["*storage*"]
+    defaults:
+      outputs:
+        code:
+          path: "src/storage.py"
+
+  # ============================================================
+  # CLI
+  # ============================================================
+
+  cli:
+    paths: ["*cli*"]
+    defaults:
+      outputs:
+        code:
+          path: "src/cli.py"
+
+  # ============================================================
+  # MAIN
+  # ============================================================
+
+  main:
+    paths: ["*main*"]
+    defaults:
+      outputs:
+        code:
+          path: "todo.py"
+
+  # ============================================================
+  # DEFAULT FALLBACK
+  # ============================================================
+
+  default:
+    defaults:
+      prompts_dir: "prompts/"
+      generate_output_path: "src/"
+      test_output_path: "tests/"
+      example_output_path: "examples/"

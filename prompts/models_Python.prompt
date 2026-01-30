@@ -1,0 +1,46 @@
+% Create a Python module for Task data models
+
+# Task Data Models
+
+Create a Python module that defines the Task data class for the Todo application.
+
+## Requirements
+
+1. **Task Class**
+   - Use Python dataclass decorator
+   - Fields:
+     - `id`: int - Unique identifier for the task
+     - `description`: str - Task description text
+     - `completed`: bool - Whether task is completed (default: False)
+     - `created_at`: str - ISO timestamp when task was created
+   - Provide type hints for all fields
+   - Include a `__post_init__` method to generate timestamp if not provided
+
+2. **Type Safety**
+   - Use proper type annotations
+   - Import typing modules as needed (List, Optional, etc.)
+
+3. **JSON Serialization Helpers**
+   - Add `to_dict()` method to convert Task to dictionary
+   - Add `from_dict()` class method to create Task from dictionary
+
+## Example Usage
+
+```python
+from models import Task
+from datetime import datetime
+
+# Create a new task
+task = Task(id=1, description="Buy groceries")
+print(task.to_dict())
+
+# Load from dictionary
+task_dict = {"id": 1, "description": "Buy groceries", "completed": False, "created_at": "2024-01-01T10:00:00"}
+task = Task.from_dict(task_dict)
+```
+
+## Output
+
+- File: `src/models.py`
+- Clean, well-documented Python code
+- Follow PEP 8 style guidelines

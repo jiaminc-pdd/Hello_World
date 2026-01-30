@@ -1,0 +1,133 @@
+[
+  {
+    "reason": "Data models define the structure for Task objects and provide type safety",
+    "description": "Python module defining Task data class with id, description, completed status, and created timestamp. Provides type hints and validation.",
+    "dependencies": [],
+    "priority": 1,
+    "filename": "models_Python.prompt",
+    "filepath": "src/models.py",
+    "tags": [
+      "data",
+      "models",
+      "types"
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "Task",
+            "signature": "@dataclass\nclass Task",
+            "returns": "Task dataclass"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Storage module handles persistence of tasks to JSON file with atomic writes",
+    "description": "Python module for reading and writing tasks to todos.json file. Provides load_tasks() and save_tasks() functions with error handling and atomic writes.",
+    "dependencies": [
+      "models_Python.prompt"
+    ],
+    "priority": 2,
+    "filename": "storage_Python.prompt",
+    "filepath": "src/storage.py",
+    "tags": [
+      "storage",
+      "persistence",
+      "json"
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "load_tasks",
+            "signature": "() -> List[Task]",
+            "returns": "List of Task objects"
+          },
+          {
+            "name": "save_tasks",
+            "signature": "(tasks: List[Task]) -> None",
+            "returns": "None"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "CLI module provides the command-line interface using argparse",
+    "description": "Python module implementing CLI commands: add, list, complete, delete. Uses argparse for command parsing and provides user-friendly output.",
+    "dependencies": [
+      "models_Python.prompt",
+      "storage_Python.prompt"
+    ],
+    "priority": 3,
+    "filename": "cli_Python.prompt",
+    "filepath": "src/cli.py",
+    "tags": [
+      "cli",
+      "interface",
+      "commands"
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "add_task",
+            "signature": "(description: str) -> None",
+            "returns": "None"
+          },
+          {
+            "name": "list_tasks",
+            "signature": "() -> None",
+            "returns": "None"
+          },
+          {
+            "name": "complete_task",
+            "signature": "(task_id: int) -> None",
+            "returns": "None"
+          },
+          {
+            "name": "delete_task",
+            "signature": "(task_id: int) -> None",
+            "returns": "None"
+          },
+          {
+            "name": "main",
+            "signature": "() -> None",
+            "returns": "None"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Main entry point script that invokes the CLI module",
+    "description": "Python executable script that serves as the main entry point. Imports and calls cli.main() with proper error handling.",
+    "dependencies": [
+      "cli_Python.prompt"
+    ],
+    "priority": 4,
+    "filename": "main_Python.prompt",
+    "filepath": "todo.py",
+    "tags": [
+      "main",
+      "entry-point"
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "main",
+            "signature": "if __name__ == '__main__':",
+            "returns": "None"
+          }
+        ]
+      }
+    }
+  }
+]

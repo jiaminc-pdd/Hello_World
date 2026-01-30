@@ -1,0 +1,49 @@
+% Create the main entry point script
+
+# Main Entry Point
+
+Create the main executable script that serves as the entry point for the Todo application.
+
+## Requirements
+
+1. **Script Setup**
+   - Shebang line: `#!/usr/bin/env python3`
+   - Make it executable
+   - Simple and clean
+
+2. **Main Execution**
+   - Import cli.main
+   - Call cli.main() when script is run directly
+   - Include proper `if __name__ == '__main__':` guard
+
+3. **Error Handling**
+   - Wrap cli.main() in try-except
+   - Catch and display any unhandled exceptions
+   - Exit with proper exit code (0 for success, 1 for errors)
+
+4. **Documentation**
+   - Module docstring explaining this is the entry point
+   - Brief usage instructions
+
+## Dependencies
+
+- cli.main function for CLI execution
+
+## Example Usage
+
+```bash
+# Run the application
+python todo.py add "Buy groceries"
+python todo.py list
+
+# Or make it executable
+chmod +x todo.py
+./todo.py add "Buy groceries"
+```
+
+## Output
+
+- File: `todo.py` (at project root)
+- Simple, clean entry point
+- Proper error handling
+- Follow PEP 8 style guidelines

@@ -1,0 +1,64 @@
+% Create a Python module for JSON storage persistence
+
+# Task Storage Module
+
+Create a Python module that handles reading and writing tasks to a JSON file.
+
+## Requirements
+
+1. **Storage Configuration**
+   - Default file: `todos.json` in current directory
+   - Use atomic writes to prevent corruption
+   - Handle missing file gracefully (return empty list)
+
+2. **Core Functions**
+
+   **`load_tasks() -> List[Task]`**
+   - Read tasks from JSON file
+   - Return empty list if file doesn't exist
+   - Handle JSON parsing errors gracefully
+   - Convert JSON objects to Task instances
+
+   **`save_tasks(tasks: List[Task]) -> None`**
+   - Write tasks to JSON file
+   - Use atomic write (write to temp file, then rename)
+   - Create parent directory if needed
+   - Handle write errors with informative messages
+
+3. **Error Handling**
+   - Catch and log JSON decode errors
+   - Catch and log file I/O errors
+   - Never crash - always provide fallback behavior
+
+4. **Data Format**
+   - Store tasks as JSON array
+   - Each task is a JSON object with id, description, completed, created_at
+   - Pretty print JSON with indent=2
+
+## Dependencies
+
+- models.Task class for data structure
+
+## Example Usage
+
+```python
+from storage import load_tasks, save_tasks
+from models import Task
+
+# Load existing tasks
+tasks = load_tasks()
+
+# Add a new task
+new_task = Task(id=len(tasks) + 1, description="Write documentation")
+tasks.append(new_task)
+
+# Save all tasks
+save_tasks(tasks)
+```
+
+## Output
+
+- File: `src/storage.py`
+- Robust error handling
+- Clean, well-documented Python code
+- Follow PEP 8 style guidelines
