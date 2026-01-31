@@ -1,0 +1,71 @@
+You are tasked with implementing the CLI entry point that orchestrates user commands and presentation logic for the todo application. This module uses argparse with subcommands (add, list, complete, delete) to dispatch to storage module operations and format output for terminal display.
+
+Requirements
+1. Implement a command-line interface using argparse with four subcommands: add, list, complete, delete
+2. Subcommand 'add' takes a required positional argument 'description' (str) and calls storage.add_task(), displaying confirmation message
+3. Subcommand 'list' takes no arguments, calls storage.load_tasks(), and displays all tasks in a readable format with ID, status indicator, description, and creation date
+4. Subcommand 'complete' takes a required positional argument 'task_id' (int) and calls storage.complete_task(), displaying success or error message
+5. Subcommand 'delete' takes a required positional argument 'task_id' (int) and calls storage.delete_task(), displaying success or error message
+6. Use the subcommand pattern with set_defaults(func=handler) for clean routing to handler functions
+7. Handle exceptions from storage layer and present user-friendly error messages to stderr
+8. Format list output with clear visual indicators: [✓] for completed tasks, [ ] for incomplete tasks
+9. Exit with code 0 on success, 1 on error (task not found or I/O failure)
+10. Serve as the main executable entry point with if __name__ == '__main__': main()
+
+Dependencies
+
+<task_model>
+  <include>src/task.py</include>
+</task_model>
+
+<storage>
+  <include>src/storage.py</include>
+</storage>
+
+<argparse_api_reference>
+  <web>https://docs.python.org/3/library/argparse.html</web>
+</argparse_api_reference>
+
+<argparse_tutorial>
+  <web>https://docs.python.org/3/howto/argparse.html</web>
+</argparse_tutorial>
+
+<argparse_subcommand_pattern>
+  <web>https://realpython.com/command-line-interfaces-python-argparse/</web>
+</argparse_subcommand_pattern>
+
+Prompt Dependencies:
+- task_model_Python.prompt
+- storage_Python.prompt
+
+Instructions
+- Import argparse, sys from standard library, and storage module functions (add_task, load_tasks, complete_task, delete_task)
+- Create ArgumentParser with description='Simple command-line todo list application'
+- Add subparsers with subparsers = parser.add_subparsers(dest='command', required=True)
+- Define add subcommand: parser_add = subparsers.add_parser('add', help='Add a new task'); parser_add.add_argument('description', type=str, help='Task description'); parser_add.set_defaults(func=handle_add)
+- Define list subcommand: parser_list = subparsers.add_parser('list', help='List all tasks'); parser_list.set_defaults(func=handle_list)
+- Define complete subcommand: parser_complete = subparsers.add_parser('complete', help='Mark a task as completed'); parser_complete.add_argument('task_id', type=int, help='Task ID'); parser_complete.set_defaults(func=handle_complete)
+- Define delete subcommand: parser_delete = subparsers.add_parser('delete', help='Delete a task'); parser_delete.add_argument('task_id', type=int, help='Task ID'); parser_delete.set_defaults(func=handle_delete)
+- Implement handle_add(args) that calls storage.add_task(args.description) and prints "Added task {task.id}: {task.description}"
+- Implement handle_list(args) that calls storage.load_tasks() and prints each task formatted as "{task.id}. [{'✓' if task.completed else ' '}] {task.description} (created: {task.created_at.strftime('%Y-%m-%d %H:%M')})"
+- Implement handle_complete(args) that calls storage.complete_task(args.task_id) and prints success or "Task {task_id} not found" based on return value
+- Implement handle_delete(args) that calls storage.delete_task(args.task_id) and prints success or "Task {task_id} not found" based on return value
+- Implement main() function that parses args, calls args.func(args), and wraps in try-except to catch storage exceptions and print to stderr before exiting with code 1
+- Use sys.exit(1) for error exits, sys.exit(0) or implicit return for success
+- Print error messages to sys.stderr using print(..., file=sys.stderr)
+- Handle empty task list in handle_list by printing "No tasks found." instead of empty output
+
+Deliverable
+- A single Python file todo.py containing the main() function and all command handlers
+- The file should be executable as a script: python todo.py <command> [args]
+- Clean, user-friendly output format for all operations
+- Proper error handling with informative messages for common failure cases
+
+Implementation assumptions (explicit)
+- Script runs in same directory as todos.json or user provides full path (not implemented in this version)
+- Python 3.9+ for type hints (list[Task] syntax)
+- Terminal supports Unicode characters for checkmarks (✓)
+- No color output or advanced formatting (keep it simple for v1)
+- No configuration file or environment variables needed
+
+Please produce production-ready code for the CLI module consistent with the above requirements.

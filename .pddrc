@@ -1,0 +1,36 @@
+version: "1.0"
+
+contexts:
+  # ============================================================
+  # BACKEND MODULES
+  # ============================================================
+
+  task_model:
+    paths: ["*task_model*"]
+    defaults:
+      outputs:
+        code:
+          path: "src/task.py"
+
+  storage:
+    paths: ["*storage*"]
+    defaults:
+      outputs:
+        code:
+          path: "src/storage.py"
+
+  cli:
+    paths: ["*cli*"]
+    defaults:
+      outputs:
+        code:
+          path: "todo.py"
+
+  # ============================================================
+  # DEFAULT FALLBACK
+  # ============================================================
+
+  default:
+    defaults:
+      prompts_dir: "prompts/"
+      generate_output_path: "src/"

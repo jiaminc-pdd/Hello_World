@@ -1,0 +1,61 @@
+You are tasked with implementing the storage module, which manages read-modify-write operations on todos.json for persisting tasks. This module implements atomic writes using temporary files and os.replace() to prevent data corruption, handles missing file initialization, and maintains task ID counter.
+
+Requirements
+1. Implement load_tasks(filepath: str = 'todos.json') -> list[Task] that reads tasks from JSON file, returning empty list if file doesn't exist
+2. Implement save_tasks(tasks: list[Task], filepath: str = 'todos.json') -> None that atomically writes tasks to JSON file using temporary file and os.replace()
+3. Implement add_task(description: str) -> Task that creates a new task with auto-incremented ID, appends to existing tasks, and persists to todos.json
+4. Implement complete_task(task_id: int) -> bool that marks a task as completed by ID, persists changes, returns True on success or False if task not found
+5. Implement delete_task(task_id: int) -> bool that removes a task by ID, persists changes, returns True on success or False if task not found
+6. Use UTF-8 encoding for all file operations and indent JSON output for readability
+7. Handle file I/O errors gracefully with descriptive exception messages (FileNotFoundError, JSONDecodeError, IOError, OSError)
+8. Maintain an auto-incrementing ID counter by finding max ID in existing tasks and adding 1
+9. Ensure atomic writes to prevent partial file corruption during crashes or interrupts
+
+Dependencies
+
+<task_model>
+  <include>src/task.py</include>
+</task_model>
+
+<json_module_api_reference>
+  <web>https://docs.python.org/3/library/json.html</web>
+</json_module_api_reference>
+
+<json_best_practices_tutorial>
+  <web>https://realpython.com/python-json/</web>
+</json_best_practices_tutorial>
+
+<atomic_file_write_pattern>
+  <web>https://sahmanish20.medium.com/better-file-writing-in-python-embrace-atomic-updates-593843bfab4f</web>
+</atomic_file_write_pattern>
+
+Prompt Dependencies:
+- task_model_Python.prompt
+
+Instructions
+- Import Task from task module: from task import Task
+- Import required modules: json, os, tempfile from standard library
+- Implement load_tasks() that catches FileNotFoundError and returns [] for missing files, uses json.load() with UTF-8 encoding, deserializes using Task.from_dict()
+- Implement save_tasks() using atomic write pattern: write to temporary file in same directory, flush and sync, then os.replace() to atomically move temp file over target file
+- For atomic writes: use tempfile.NamedTemporaryFile(mode='w', delete=False, dir=os.path.dirname(filepath), suffix='.tmp') to ensure temp file is on same filesystem as target
+- Implement add_task() by loading existing tasks, calculating next ID as max([t.id for t in tasks], default=0) + 1, creating new Task with current UTC timestamp, appending, and saving
+- Implement complete_task() by loading tasks, finding task by ID, setting completed=True, saving, and returning success status
+- Implement delete_task() by loading tasks, filtering out task with matching ID, saving, and returning True if any task was removed
+- Use json.dump(data, f, indent=2, ensure_ascii=False) for pretty-printed JSON output
+- All functions should use default filepath='todos.json' for consistency
+- Raise descriptive exceptions on errors: e.g., "Failed to write tasks to {filepath}: {error}"
+
+Deliverable
+- A single Python file src/storage.py containing all five functions (load_tasks, save_tasks, add_task, complete_task, delete_task)
+- Functions should be importable and ready to use by CLI module
+- Ensure todos.json is created on first write if it doesn't exist
+- Include proper error handling with try-except blocks where appropriate
+
+Implementation assumptions (explicit)
+- The todos.json file lives in the current working directory by default
+- Task IDs are auto-incremented integers starting from 1
+- No concurrent access protection needed (single-user CLI application)
+- File system supports atomic os.replace() operation (true on POSIX and modern Windows)
+- No need for file locking or transaction management beyond atomic writes
+
+Please produce production-ready code for the storage module consistent with the above requirements.
