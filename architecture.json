@@ -1,0 +1,236 @@
+[
+  {
+    "reason": "Foundational Task data structure required by all other modules",
+    "description": "Python dataclass defining the Task entity with id, description, completed status, and created_at timestamp. Provides validation for task fields and serialization to/from dict for JSON storage. Uses auto-incrementing integer IDs for simplicity.",
+    "dependencies": [],
+    "priority": 1,
+    "filename": "task_model_Python.prompt",
+    "filepath": "src/task.py",
+    "tags": [
+      "backend",
+      "model",
+      "python"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.python.org/3/library/dataclasses.html",
+        "purpose": "dataclasses_api_reference"
+      },
+      {
+        "url": "https://docs.python.org/3/library/datetime.html",
+        "purpose": "datetime_module_reference"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "Task",
+            "signature": "@dataclass class Task",
+            "returns": "Task instance",
+            "sideEffects": "None - pure data class"
+          },
+          {
+            "name": "to_dict",
+            "signature": "def to_dict(self) -> dict",
+            "returns": "dict representation for JSON serialization"
+          },
+          {
+            "name": "from_dict",
+            "signature": "@classmethod def from_dict(cls, data: dict) -> Task",
+            "returns": "Task instance from dict"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "JSON persistence layer needed to store and retrieve tasks from local file",
+    "description": "Storage module managing read-modify-write operations on todos.json. Implements atomic writes using temporary files and os.replace() to prevent data corruption. Handles missing file initialization, JSON encoding/decoding with UTF-8, and maintains task ID counter. All operations raise exceptions with descriptive messages for file I/O errors.",
+    "dependencies": [
+      "task_model_Python.prompt"
+    ],
+    "priority": 2,
+    "filename": "storage_Python.prompt",
+    "filepath": "src/storage.py",
+    "tags": [
+      "backend",
+      "storage",
+      "python"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.python.org/3/library/json.html",
+        "purpose": "json_module_api_reference"
+      },
+      {
+        "url": "https://realpython.com/python-json/",
+        "purpose": "json_best_practices_tutorial"
+      },
+      {
+        "url": "https://sahmanish20.medium.com/better-file-writing-in-python-embrace-atomic-updates-593843bfab4f",
+        "purpose": "atomic_file_write_pattern"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "load_tasks",
+            "signature": "def load_tasks(filepath: str = 'todos.json') -> list[Task]",
+            "returns": "List of Task objects",
+            "errors": [
+              "FileNotFoundError",
+              "JSONDecodeError"
+            ]
+          },
+          {
+            "name": "save_tasks",
+            "signature": "def save_tasks(tasks: list[Task], filepath: str = 'todos.json') -> None",
+            "returns": "None",
+            "errors": [
+              "IOError",
+              "OSError"
+            ],
+            "sideEffects": "Writes to filesystem atomically"
+          },
+          {
+            "name": "add_task",
+            "signature": "def add_task(description: str) -> Task",
+            "returns": "Newly created Task",
+            "sideEffects": "Persists to todos.json"
+          },
+          {
+            "name": "delete_task",
+            "signature": "def delete_task(task_id: int) -> bool",
+            "returns": "True if deleted, False if not found",
+            "sideEffects": "Persists to todos.json"
+          },
+          {
+            "name": "complete_task",
+            "signature": "def complete_task(task_id: int) -> bool",
+            "returns": "True if marked complete, False if not found",
+            "sideEffects": "Persists to todos.json"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "CLI entry point orchestrating user commands and presentation logic",
+    "description": "Command-line interface using argparse with subcommands (add, list, complete, delete). Dispatches to storage module for persistence operations and formats output for terminal display. Implements subcommand pattern with set_defaults(func=handler) for clean routing. Handles exceptions from storage layer and presents user-friendly error messages. Serves as the main executable entry point (todo.py).",
+    "dependencies": [
+      "task_model_Python.prompt",
+      "storage_Python.prompt"
+    ],
+    "priority": 3,
+    "filename": "cli_Python.prompt",
+    "filepath": "todo.py",
+    "tags": [
+      "backend",
+      "cli",
+      "python"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.python.org/3/library/argparse.html",
+        "purpose": "argparse_api_reference"
+      },
+      {
+        "url": "https://docs.python.org/3/howto/argparse.html",
+        "purpose": "argparse_tutorial"
+      },
+      {
+        "url": "https://realpython.com/command-line-interfaces-python-argparse/",
+        "purpose": "argparse_subcommand_pattern"
+      }
+    ],
+    "interface": {
+      "type": "cli",
+      "cli": {
+        "commands": [
+          {
+            "name": "add",
+            "args": [
+              {
+                "name": "description",
+                "type": "str",
+                "required": true
+              }
+            ],
+            "flags": [],
+            "exitCodes": [
+              {
+                "code": 0,
+                "meaning": "Success"
+              },
+              {
+                "code": 1,
+                "meaning": "Error"
+              }
+            ]
+          },
+          {
+            "name": "list",
+            "args": [],
+            "flags": [],
+            "exitCodes": [
+              {
+                "code": 0,
+                "meaning": "Success"
+              }
+            ]
+          },
+          {
+            "name": "complete",
+            "args": [
+              {
+                "name": "task_id",
+                "type": "int",
+                "required": true
+              }
+            ],
+            "flags": [],
+            "exitCodes": [
+              {
+                "code": 0,
+                "meaning": "Success"
+              },
+              {
+                "code": 1,
+                "meaning": "Task not found"
+              }
+            ]
+          },
+          {
+            "name": "delete",
+            "args": [
+              {
+                "name": "task_id",
+                "type": "int",
+                "required": true
+              }
+            ],
+            "flags": [],
+            "exitCodes": [
+              {
+                "code": 0,
+                "meaning": "Success"
+              },
+              {
+                "code": 1,
+                "meaning": "Task not found"
+              }
+            ]
+          }
+        ],
+        "io": {
+          "stdin": "Not used",
+          "stdout": "Formatted task lists and confirmation messages"
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,43 @@
+You are tasked with implementing the Task data model, which serves as the foundational data structure for the todo application. This module defines the Task entity with id, description, completed status, and created_at timestamp, providing validation and serialization capabilities for JSON storage.
+
+Requirements
+1. Implement a Python dataclass named Task with the following fields: id (int), description (str), completed (bool), and created_at (datetime)
+2. Provide a to_dict() method that serializes the Task instance to a dictionary suitable for JSON storage, converting datetime to ISO 8601 string format
+3. Provide a from_dict() classmethod that deserializes a dictionary back into a Task instance, parsing ISO 8601 datetime strings
+4. Ensure proper field validation: id must be positive, description must be non-empty, completed defaults to False, created_at defaults to current UTC time
+5. Use type hints throughout for clarity and IDE support
+6. Handle edge cases such as missing fields in from_dict() with sensible defaults or clear error messages
+7. Keep the implementation simple and focused - this is a pure data class with no business logic
+
+Dependencies
+
+<dataclasses_api_reference>
+  <web>https://docs.python.org/3/library/dataclasses.html</web>
+</dataclasses_api_reference>
+
+<datetime_module_reference>
+  <web>https://docs.python.org/3/library/datetime.html</web>
+</datetime_module_reference>
+
+Instructions
+- Define the Task class using the @dataclass decorator from the dataclasses module
+- Include fields: id: int, description: str, completed: bool = False, created_at: datetime = field(default_factory=datetime.utcnow)
+- Implement to_dict(self) -> dict method that returns {'id': self.id, 'description': self.description, 'completed': self.completed, 'created_at': self.created_at.isoformat()}
+- Implement from_dict(cls, data: dict) -> Task classmethod that creates a Task from a dictionary, parsing 'created_at' using datetime.fromisoformat() if present
+- Add basic validation in __post_init__ or rely on type hints for enforcement
+- Use datetime.datetime from the datetime module for timestamp handling
+- Ensure the created_at field uses UTC timezone for consistency
+- Test edge cases: missing 'completed' field (should default to False), missing 'created_at' (should use current time), invalid datetime format (should raise ValueError)
+
+Deliverable
+- A single Python file src/task.py containing the Task dataclass
+- The class should be importable and ready to use by other modules (storage, CLI)
+- Include proper imports: from dataclasses import dataclass, field; from datetime import datetime
+
+Implementation assumptions (explicit)
+- IDs are managed externally (by storage module) and are simple auto-incrementing integers
+- All timestamps use UTC without timezone info (naive datetime objects) for simplicity
+- No external validation library needed; rely on Python's built-in type system and dataclass features
+- The module has no external dependencies beyond Python standard library
+
+Please produce production-ready code for the Task data model consistent with the above requirements.
